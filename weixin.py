@@ -27,21 +27,8 @@ if __name__ == '__main__':
     bot.file_helper.send('微信机器人已成功登录')
     listening_group = ensure_one(bot.groups().search('test_group'))
     fans_group = ensure_one(bot.groups().search('同好会'))
-    @bot.register(listening_group)
+    @bot.register(chats=[listening_group,fans_group],except_self=False,msg_types=TEXT)
     def test_group_auto(msg):
-        print(msg.type)
-        reply = None
-        if msg.type == 'Text':
-            reply = miaomiaomiao(msg.text)
-        if reply:
-            listening_group.send(reply)
-    @bot.register(fans_group)
-    def test_group_auto(msg):
-        print(msg.type)
-        reply = None
-        if msg.type == 'Text':
-            reply = miaomiaomiao(msg.text)
-        if reply:
-            fans_group.send(reply)
+        return miaomiaomiao(msg.text)
     embed()
     
