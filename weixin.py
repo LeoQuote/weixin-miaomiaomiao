@@ -25,10 +25,19 @@ def miaomiaomiao(content):
 if __name__ == '__main__':
     bot = Bot(console_qr=True)
     bot.file_helper.send('微信机器人已成功登录')
-    listening_group = ensure_one(bot.groups().search('test_group'))
+    test_group = ensure_one(bot.groups().search('test_group'))
     fans_group = ensure_one(bot.groups().search('同好会'))
-    @bot.register(chats=[listening_group,fans_group],except_self=False,msg_types=TEXT)
+    listening_group = [test_group] + [fans_group] + bot.friends()
+    my_self = ensure_one(bot.friends().search('很久很久以前'))
+    @bot.register(chats=listening_group,except_self=False,msg_types=TEXT)
     def test_group_auto(msg):
         return miaomiaomiao(msg.text)
-    embed()
+    @bot.register(chats=my_self,except_self=False,msg_types=TEXT)
+    def turn_it_on_and_off(msg):
+        if msg.text == 'off':
+            bot.registered.disable()
+            bot.registered.enable(turn_it_on_and_off)
+        if msg.text == 'on':
+            bot.registered.enable()
+    bot.join()
     
