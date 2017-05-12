@@ -1,6 +1,7 @@
 # 导入模块
 from wxpy import *
 import random
+import math
 # 初始化机器人，扫码登陆
 
 def miaomiaomiao(content):
@@ -8,9 +9,9 @@ def miaomiaomiao(content):
     emoji_list = ['(゜-゜)','(=`ｪ´=；)ゞ','(;´༎ຶД༎ຶ`)','⁄(⁄⁄•⁄ω⁄•⁄⁄)⁄','(´･_･`)','(｀∀´)','(:3[▓▓▓]','（╯‵□′）╯︵┴─┴','₍•͈˽•͈₎','∠( ᐛ 」∠)＿','(*ﾉωﾉ)','ヾ(*>∀＜*) ','(ฅωฅ*)','<(￣︶￣)/ ','(´⊙ω⊙`)','(๑•̀ω•́๑)','(≧∀≦)♪','(*/∇＼*)','(｡･ω･｡)ﾉ♡','( • ̀ω•́ )✧','(☆ω☆)','╮(￣⊿￣")╭','(′へ`、)','(ﾟﾛ ﾟﾉ)ﾉ','(*｀▽´*)','Ծ‸Ծ']
     if '喵喵' in content or '猫猫' in content:
         sig_choices = ['？','！','~','~~~','？？？','？！','！！！']
-        miao_count = random.randrange(3,15)
+        miao_count = random.randrange(1,15)
         reply_list = ['喵'] * miao_count
-        sig_count = random.randrange(0,miao_count-2)
+        sig_count = random.randrange(0,math.ceil(miao_count/2))
         emoji_count = random.randrange(0,2)
         if emoji_count == 0:
             emoji = ''
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     fans_group = ensure_one(bot.groups().search('同好会'))
     listening_group = [test_group] + [fans_group] + bot.friends()
     my_self = ensure_one(bot.friends().search('很久很久以前'))
-    @bot.register(chats=listening_group,except_self=False,msg_types=TEXT)
+    @bot.register(chats=[test_group] + [fans_group] + bot.friends(),except_self=False,msg_types=TEXT)
     def test_group_auto(msg):
         return miaomiaomiao(msg.text)
     @bot.register(chats=my_self,except_self=False,msg_types=TEXT)
@@ -37,7 +38,9 @@ if __name__ == '__main__':
         if msg.text == 'off':
             bot.registered.disable()
             bot.registered.enable(turn_it_on_and_off)
+            return '机器人已成功暂停'
         if msg.text == 'on':
             bot.registered.enable()
+            return '机器人已成功重启'
     bot.join()
     
